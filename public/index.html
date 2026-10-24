@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FleetPulse | Enterprise Vehicle Rental & Fleet Management System</title>
+  <meta name="description" content="High-performance Vehicle Rental Management application powered by O(1) HashSet duplicate prevention and HashMap key-value directories.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-theme">
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.9 2 11.2 2 11.5V16c0 .6.4 1 1 1h2"/>
+            <circle cx="7" cy="17" r="2"/>
+            <path d="M9 17h6"/>
+            <circle cx="17" cy="17" r="2"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">FleetPulse</span>
+          <span class="brand-badge">HASH-CORE</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-section-label">OPERATIONS</div>
+        <button class="nav-item active" data-view="dashboard" id="nav-dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="fleet" id="nav-fleet">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.9 2 11.2 2 11.5V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+          <span>Fleet Management</span>
+          <span class="nav-pill" id="nav-fleet-count">0</span>
+        </button>
+        <button class="nav-item" data-view="customers" id="nav-customers">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Customer Registry</span>
+        </button>
+        <button class="nav-item" data-view="booking" id="nav-booking">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          <span>Rental Booking Engine</span>
+        </button>
+        <button class="nav-item" data-view="rentals" id="nav-rentals">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Active Rentals & Returns</span>
+          <span class="nav-pill active-pill" id="nav-active-count">0</span>
+        </button>
+        <button class="nav-item" data-view="history" id="nav-history">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+          <span>Rental History Logs</span>
+        </button>
+
+        <div class="nav-section-label">SYSTEM ARCHITECTURE</div>
+        <button class="nav-item" data-view="inspector" id="nav-inspector">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          <span>Memory & Inspector</span>
+          <span class="pulse-dot"></span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="architecture-indicator">
+          <div class="indicator-header">
+            <span class="indicator-status-dot"></span>
+            <span class="indicator-title">HashSet & HashMap Core</span>
+          </div>
+          <p class="indicator-desc">O(1) duplicate checks & key-value retrieval active</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title" id="page-title">Fleet Dashboard Overview</h1>
+          <p class="page-subtitle" id="page-subtitle">Real-time telemetry, availability tracking, and rental operations</p>
+        </div>
+
+        <div class="topbar-actions">
+          <!-- Instant O(1) Vehicle Lookup Bar -->
+          <div class="quick-lookup-box">
+            <div class="lookup-input-wrapper">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="instant-lookup-input" placeholder="O(1) Query by Plate or ID (e.g. CA-7TX99, VH-101)..." autocomplete="off">
+              <span class="lookup-hint">HashMap O(1)</span>
+            </div>
+            <!-- Quick result popup -->
+            <div class="quick-result-dropdown" id="quick-result-dropdown"></div>
+          </div>
+
+          <button class="btn btn-secondary" id="btn-header-add-vehicle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>+ Add Vehicle</span>
+          </button>
+          <button class="btn btn-primary" id="btn-header-new-rental">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            <span>+ New Rental</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Summary Stats Banner (visible across core views) -->
+      <section class="stats-grid" id="stats-banner">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">TOTAL FLEET</span>
+            <div class="stat-icon-wrapper bg-indigo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.9 2 11.2 2 11.5V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+            </div>
+          </div>
+          <div class="stat-value" id="stat-total-fleet">--</div>
+          <div class="stat-footer">
+            <span class="stat-detail" id="stat-fleet-detail">Unique in HashSet</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">AVAILABLE VEHICLES</span>
+            <div class="stat-icon-wrapper bg-emerald">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+          </div>
+          <div class="stat-value text-emerald" id="stat-available-fleet">--</div>
+          <div class="stat-footer">
+            <span class="badge badge-emerald" id="stat-available-badge">Ready for booking</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">ACTIVE RENTALS</span>
+            <div class="stat-icon-wrapper bg-rose">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+          </div>
+          <div class="stat-value text-rose" id="stat-active-rentals">--</div>
+          <div class="stat-footer">
+            <span class="stat-detail" id="stat-active-detail">Stored in activeBookings Map</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">TOTAL REVENUE</span>
+            <div class="stat-icon-wrapper bg-cyan">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+          </div>
+          <div class="stat-value text-cyan" id="stat-total-revenue">$0.00</div>
+          <div class="stat-footer">
+            <span class="stat-detail">Lifetime rental receipts</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">FLEET UTILIZATION</span>
+            <div class="stat-icon-wrapper bg-amber">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+            </div>
+          </div>
+          <div class="stat-value text-amber" id="stat-utilization-rate">0%</div>
+          <div class="stat-footer">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="stat-utilization-bar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW PANELS -->
+      <div class="view-container">
+
+        <!-- ================================================================= -->
+        <!-- VIEW 1: DASHBOARD HOME -->
+        <!-- ================================================================= -->
+        <section class="view-panel active" id="view-dashboard">
+          <div class="dashboard-grid">
+            <!-- Left: Fleet Quick Overview -->
+            <div class="card col-span-2">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Fleet Status & Quick Availability</h3>
+                  <p class="card-subtitle">Real-time status synced from vehicleDirectory HashMap</p>
+                </div>
+                <div class="card-actions">
+                  <button class="btn btn-sm btn-outline" id="btn-view-all-fleet">View All Fleet &rarr;</button>
+                </div>
+              </div>
+              <div class="table-container">
+                <table class="data-table" id="dashboard-fleet-table">
+                  <thead>
+                    <tr>
+                      <th>VEHICLE / PLATE</th>
+                      <th>CATEGORY</th>
+                      <th>DAILY RATE</th>
+                      <th>CURRENT STATUS</th>
+                      <th>ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Right: System Architecture Callout -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Memory & Query Logic</h3>
+                  <p class="card-subtitle">Underlying Data Structure Execution</p>
+                </div>
+              </div>
+              <div class="ds-architecture-showcase">
+                <div class="ds-item">
+                  <div class="ds-item-badge">HashSet</div>
+                  <div class="ds-item-info">
+                    <h4>Unique Vehicles Set</h4>
+                    <p>O(1) duplicate plate & VIN collision validation</p>
+                    <span class="code-pill" id="badge-unique-vehicles-count">0 items</span>
+                  </div>
+                </div>
+
+                <div class="ds-item">
+                  <div class="ds-item-badge">HashSet</div>
+                  <div class="ds-item-info">
+                    <h4>Unique Customers Set</h4>
+                    <p>Enforces unique customer ID & email addresses</p>
+                    <span class="code-pill" id="badge-unique-customers-count">0 items</span>
+                  </div>
+                </div>
+
+                <div class="ds-item">
+                  <div class="ds-item-badge bg-map">HashMap</div>
+                  <div class="ds-item-info">
+                    <h4>Vehicle Directory &lt;ID, Vehicle&gt;</h4>
+                    <p>O(1) vehicle availability & specs lookup</p>
+                    <span class="code-pill" id="badge-vehicle-map-count">0 entries</span>
+                  </div>
+                </div>
+
+                <div class="ds-item">
+                  <div class="ds-item-badge bg-map">HashMap</div>
+                  <div class="ds-item-info">
+                    <h4>Active Bookings &lt;ID, Booking&gt;</h4>
+                    <p>Instant lookup for vehicle return & checking</p>
+                    <span class="code-pill" id="badge-active-map-count">0 entries</span>
+                  </div>
+                </div>
+
+                <div class="ds-item">
+                  <div class="ds-item-badge bg-map">HashMap</div>
+                  <div class="ds-item-info">
+                    <h4>Rental History &lt;ID, List&lt;Log&gt;&gt;</h4>
+                    <p>O(1) access to vehicle chronological logs</p>
+                    <span class="code-pill">Chained Lists</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom: Recent Active Bookings -->
+            <div class="card col-span-3">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Live Active Rentals</h3>
+                  <p class="card-subtitle">Currently dispatched vehicles awaiting return</p>
+                </div>
+                <div class="card-actions">
+                  <button class="btn btn-sm btn-primary" id="btn-dashboard-new-rental">+ Create Rental</button>
+                </div>
+              </div>
+              <div class="table-container">
+                <table class="data-table" id="dashboard-active-table">
+                  <thead>
+                    <tr>
+                      <th>BOOKING ID</th>
+                      <th>VEHICLE</th>
+                      <th>CUSTOMER</th>
+                      <th>RENTAL PERIOD</th>
+                      <th>TOTAL CHARGE</th>
+                      <th>STATUS</th>
+                      <th>ACTION</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Populated by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 2: FLEET MANAGEMENT & REGISTRATION -->
+        <!-- ================================================================= -->
+        <section class="view-panel" id="view-fleet">
+          <div class="content-toolbar">
+            <div class="filter-group">
+              <!-- Search query -->
+              <div class="search-input-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="fleet-filter-search" placeholder="Filter by plate, model, or brand...">
+              </div>
+
+              <!-- Status filter badges -->
+              <div class="filter-pill-group" id="fleet-status-filters">
+                <button class="filter-pill active" data-status="All">All Status</button>
+                <button class="filter-pill" data-status="Available">Available</button>
+                <button class="filter-pill" data-status="Rented">Rented</button>
+                <button class="filter-pill" data-status="Maintenance">Maintenance</button>
+              </div>
+
+              <!-- Vehicle type filter -->
+              <div class="filter-pill-group" id="fleet-type-filters">
+                <button class="filter-pill active" data-type="All">All Types</button>
+                <button class="filter-pill" data-type="Electric">Electric</button>
+                <button class="filter-pill" data-type="SUV">SUV</button>
+                <button class="filter-pill" data-type="Sedan">Sedan</button>
+                <button class="filter-pill" data-type="Truck">Truck</button>
+                <button class="filter-pill" data-type="Luxury">Luxury</button>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" id="btn-open-register-vehicle-modal">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ Register New Vehicle</span>
+            </button>
+          </div>
+
+          <!-- Fleet Data Table -->
+          <div class="card">
+            <div class="table-container">
+              <table class="data-table" id="fleet-full-table">
+                <thead>
+                  <tr>
+                    <th>VEHICLE ID</th>
+                    <th>LICENSE PLATE</th>
+                    <th>MAKE & MODEL</th>
+                    <th>TYPE</th>
+                    <th>YEAR / COLOR</th>
+                    <th>DAILY RATE</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="fleet-table-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 3: CUSTOMER REGISTRY & REGISTRATION -->
+        <!-- ================================================================= -->
+        <section class="view-panel" id="view-customers">
+          <div class="content-toolbar">
+            <div class="filter-group">
+              <div class="search-input-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="customer-filter-search" placeholder="Search customer by name, email, or ID...">
+              </div>
+            </div>
+
+            <button class="btn btn-primary" id="btn-open-register-customer-modal">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+              <span>+ Register New Customer</span>
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="table-container">
+              <table class="data-table" id="customers-full-table">
+                <thead>
+                  <tr>
+                    <th>CUSTOMER ID</th>
+                    <th>FULL NAME</th>
+                    <th>EMAIL ADDRESS</th>
+                    <th>PHONE NUMBER</th>
+                    <th>DRIVER LICENSE</th>
+                    <th>MEMBERSHIP TIER</th>
+                    <th>REGISTERED DATE</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-table-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 4: RENTAL BOOKING ENGINE -->
+        <!-- ================================================================= -->
+        <section class="view-panel" id="view-booking">
+          <div class="booking-layout">
+            <!-- Left: Interactive Form -->
+            <div class="card booking-form-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Create Rental Agreement</h3>
+                  <p class="card-subtitle">Select an available vehicle and customer for instant reservation</p>
+                </div>
+                <span class="badge badge-indigo">Step-by-Step Dispatch</span>
+              </div>
+
+              <form id="booking-form" class="standard-form">
+                <div class="form-grid">
+                  <!-- Customer Selector -->
+                  <div class="form-group col-span-2">
+                    <label for="booking-customer-select">Select Customer *</label>
+                    <select id="booking-customer-select" required>
+                      <option value="">-- Choose registered customer (CustomerRegistry Map) --</option>
+                    </select>
+                    <span class="form-help">Only registered customers verified in HashSet & HashMap are available.</span>
+                  </div>
+
+                  <!-- Available Vehicle Selector -->
+                  <div class="form-group col-span-2">
+                    <label for="booking-vehicle-select">Select Available Vehicle *</label>
+                    <select id="booking-vehicle-select" required>
+                      <option value="">-- Choose available vehicle (VehicleDirectory Map) --</option>
+                    </select>
+                    <span class="form-help">Filtered exclusively to vehicles with "Available" status.</span>
+                  </div>
+
+                  <!-- Start Date -->
+                  <div class="form-group">
+                    <label for="booking-start-date">Pickup / Start Date *</label>
+                    <input type="date" id="booking-start-date" required>
+                  </div>
+
+                  <!-- End Date -->
+                  <div class="form-group">
+                    <label for="booking-end-date">Return / End Date *</label>
+                    <input type="date" id="booking-end-date" required>
+                  </div>
+
+                  <!-- Protection & Options -->
+                  <div class="form-group col-span-2">
+                    <label for="booking-notes">Special Instructions or Notes</label>
+                    <input type="text" id="booking-notes" placeholder="e.g. Airport delivery, Child safety seat, GPS unit requested">
+                  </div>
+                </div>
+
+                <div class="form-actions-inline">
+                  <button type="submit" class="btn btn-primary btn-lg" id="btn-submit-booking">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Confirm & Execute Booking</span>
+                  </button>
+                  <button type="button" class="btn btn-secondary" id="btn-reset-booking-form">Reset Form</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Right: Dynamic Price & Operation Summary -->
+            <div class="card booking-summary-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Live Dynamic Quote</h3>
+                  <p class="card-subtitle">Real-time computation based on selected vehicle rate & days</p>
+                </div>
+              </div>
+
+              <!-- Vehicle Preview Thumbnail -->
+              <div class="quote-vehicle-preview" id="quote-vehicle-preview">
+                <div class="preview-placeholder">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.9 2 11.2 2 11.5V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                  <span>Select a vehicle to view dynamic specifications & quote</span>
+                </div>
+              </div>
+
+              <!-- Itemized calculation -->
+              <div class="quote-breakdown">
+                <div class="quote-row">
+                  <span class="quote-label">Daily Rental Rate:</span>
+                  <span class="quote-val" id="quote-daily-rate">$0.00 / day</span>
+                </div>
+                <div class="quote-row">
+                  <span class="quote-label">Rental Duration:</span>
+                  <span class="quote-val" id="quote-duration">0 Days</span>
+                </div>
+                <div class="quote-row">
+                  <span class="quote-label">Subtotal:</span>
+                  <span class="quote-val" id="quote-subtotal">$0.00</span>
+                </div>
+                <div class="quote-row">
+                  <span class="quote-label">Estimated Tax (8%):</span>
+                  <span class="quote-val" id="quote-tax">$0.00</span>
+                </div>
+                <div class="divider"></div>
+                <div class="quote-row quote-total-row">
+                  <span class="quote-label-total">Estimated Total Amount:</span>
+                  <span class="quote-val-total" id="quote-total">$0.00</span>
+                </div>
+              </div>
+
+              <!-- Memory Execution Pipeline -->
+              <div class="pipeline-card">
+                <span class="pipeline-title">Data Structure Commit Sequence:</span>
+                <ol class="pipeline-steps">
+                  <li><span class="step-num">1</span> O(1) Check vehicle in <code>vehicleDirectory</code></li>
+                  <li><span class="step-num">2</span> Mutate vehicle status to <code>"Rented"</code></li>
+                  <li><span class="step-num">3</span> <code>activeBookings.put(id, booking)</code></li>
+                  <li><span class="step-num">4</span> <code>rentalHistory.get(vehicleId).push(booking)</code></li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 5: ACTIVE RENTALS & RETURNS -->
+        <!-- ================================================================= -->
+        <section class="view-panel" id="view-rentals">
+          <div class="content-toolbar">
+            <div class="view-info-banner">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Vehicles listed here are currently deployed. Clicking <strong>Return Vehicle</strong> will immediately reset status to <strong>Available</strong> in the HashMap and archive the rental log.</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-container">
+              <table class="data-table" id="active-rentals-full-table">
+                <thead>
+                  <tr>
+                    <th>BOOKING ID</th>
+                    <th>VEHICLE PLATE</th>
+                    <th>MAKE & MODEL</th>
+                    <th>CUSTOMER</th>
+                    <th>RENTAL WINDOW</th>
+                    <th>DURATION</th>
+                    <th>DAILY RATE</th>
+                    <th>TOTAL BILL</th>
+                    <th>ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="active-rentals-table-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 6: RENTAL HISTORY LOGS -->
+        <!-- ================================================================= -->
+        <section class="view-panel" id="view-history">
+          <div class="content-toolbar">
+            <div class="filter-group">
+              <!-- Filter by vehicle -->
+              <div class="select-filter-box">
+                <label for="history-vehicle-filter">Filter by Vehicle:</label>
+                <select id="history-vehicle-filter">
+                  <option value="">All Vehicles</option>
+                </select>
+              </div>
+
+              <!-- Filter by customer -->
+              <div class="select-filter-box">
+                <label for="history-customer-filter">Filter by Customer:</label>
+                <select id="history-customer-filter">
+                  <option value="">All Customers</option>
+                </select>
+              </div>
+
+              <button class="btn btn-sm btn-secondary" id="btn-reset-history-filter">Reset Filters</button>
+            </div>
+
+            <div class="export-actions">
+              <span class="badge badge-emerald" id="history-count-badge">0 Logs Found</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-container">
+              <table class="data-table" id="history-full-table">
+                <thead>
+                  <tr>
+                    <th>BOOKING ID</th>
+                    <th>DATE LOGGED</th>
+                    <th>VEHICLE (KEY)</th>
+                    <th>CUSTOMER</th>
+                    <th>DURATION</th>
+                    <th>DAILY RATE</th>
+                    <th>TOTAL AMOUNT</th>
+                    <th>STATUS</th>
+                    <th>COMPLETION TIMESTAMP</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body">
+                  <!-- Populated by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- VIEW 7: MEMORY & DATA STRUCTURE INSPECTOR -->
+        <!-- ================================================================= -->
+        <section class="view-panel" id="view-inspector">
+          <div class="inspector-header-card">
+            <div class="inspector-badge-row">
+              <span class="badge badge-indigo">Internal State Telemetry</span>
+              <span class="badge badge-cyan">O(1) Separate Chaining Hashing</span>
+              <span class="badge badge-emerald">Real-Time Sync</span>
+            </div>
+            <h2>Live In-Memory HashSet & HashMap Architecture</h2>
+            <p>Every operational transaction in FleetPulse executes directly against explicit standard HashSets and HashMaps. Below is the live inspection of internal bucket capacity, collision counters, keys, and memory states.</p>
+          </div>
+
+          <!-- O(1) Lookup Performance Benchmark Sandbox -->
+          <div class="card sandbox-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Live O(1) Key Query Sandbox</h3>
+                <p class="card-subtitle">Benchmark instant HashMap lookup latency with djb2 hashing</p>
+              </div>
+            </div>
+            <div class="sandbox-query-bar">
+              <input type="text" id="sandbox-lookup-input" placeholder="Enter Vehicle ID or Plate (e.g., VH-101, CA-7TX99, NY-5KZ21)..." value="VH-101">
+              <button class="btn btn-primary" id="btn-run-sandbox-query">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Execute O(1) Lookup</span>
+              </button>
+            </div>
+            <div class="sandbox-result-box" id="sandbox-result-box">
+              <div class="terminal-header">
+                <span>HASHMAP QUERY METRICS & RECORD</span>
+                <span id="sandbox-latency-pill" class="badge badge-emerald">0.02 ms</span>
+              </div>
+              <pre class="terminal-body" id="sandbox-terminal-output">// Click "Execute O(1) Lookup" to view key hashing and retrieved vehicle node.</pre>
+            </div>
+          </div>
+
+          <!-- HashSets Live Telemetry -->
+          <div class="ds-grid-section">
+            <h3 class="section-title">HashSet Structures (Duplicate Prevention)</h3>
+            <div class="ds-cards-grid" id="inspector-hashsets-container">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- HashMaps Live Telemetry -->
+          <div class="ds-grid-section">
+            <h3 class="section-title">HashMap Directories (Key &rarr; Value Core Memory)</h3>
+            <div class="ds-cards-grid" id="inspector-hashmaps-container">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- MODALS -->
+  <!-- ======================================================================= -->
+
+  <!-- Modal 1: Register New Vehicle -->
+  <div class="modal-backdrop" id="modal-register-vehicle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Register New Vehicle</h3>
+          <p class="modal-subtitle">Will be validated in O(1) against <code>UniqueVehicles HashSet</code></p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-vehicle-modal">&times;</button>
+      </div>
+
+      <form id="form-register-vehicle">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="veh-plate">License Plate Number *</label>
+            <input type="text" id="veh-plate" placeholder="e.g. CA-99X88" required style="text-transform: uppercase;">
+            <span class="form-help">Checked for uniqueness via HashSet.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="veh-vin">VIN (Vehicle Identification Number)</label>
+            <input type="text" id="veh-vin" placeholder="e.g. 1HGCR2F83HA019284" style="text-transform: uppercase;">
+          </div>
+
+          <div class="form-group">
+            <label for="veh-make">Make / Manufacturer *</label>
+            <input type="text" id="veh-make" placeholder="e.g. Porsche, Tesla, Toyota" required>
+          </div>
+
+          <div class="form-group">
+            <label for="veh-model">Model Name *</label>
+            <input type="text" id="veh-model" placeholder="e.g. Macan GTS, Model Y, RAV4" required>
+          </div>
+
+          <div class="form-group">
+            <label for="veh-type">Vehicle Category *</label>
+            <select id="veh-type" required>
+              <option value="Sedan">Sedan</option>
+              <option value="SUV">SUV</option>
+              <option value="Truck">Truck</option>
+              <option value="Electric">Electric</option>
+              <option value="Luxury">Luxury</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="veh-rate">Daily Rental Rate ($) *</label>
+            <input type="number" id="veh-rate" min="20" max="1500" step="5" placeholder="e.g. 125" required>
+          </div>
+
+          <div class="form-group">
+            <label for="veh-year">Manufacturing Year</label>
+            <input type="number" id="veh-year" min="2018" max="2026" value="2024">
+          </div>
+
+          <div class="form-group">
+            <label for="veh-color">Exterior Color</label>
+            <input type="text" id="veh-color" placeholder="e.g. Chalk White, Metallic Blue" value="Metallic Gray">
+          </div>
+
+          <div class="form-group col-span-2">
+            <label for="veh-features">Key Features (comma separated)</label>
+            <input type="text" id="veh-features" placeholder="e.g. Leather Seats, Panoramic Sunroof, AWD, Heated Steering">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-vehicle-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-new-vehicle">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Register & Add to Fleet</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Register New Customer -->
+  <div class="modal-backdrop" id="modal-register-customer">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Register New Customer</h3>
+          <p class="modal-subtitle">Will be validated in O(1) against <code>UniqueCustomers HashSet</code></p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-customer-modal">&times;</button>
+      </div>
+
+      <form id="form-register-customer">
+        <div class="form-grid">
+          <div class="form-group col-span-2">
+            <label for="cust-name">Full Customer Name *</label>
+            <input type="text" id="cust-name" placeholder="e.g. Victoria Sterling" required>
+          </div>
+
+          <div class="form-group">
+            <label for="cust-email">Email Address *</label>
+            <input type="email" id="cust-email" placeholder="e.g. victoria@domain.com" required>
+            <span class="form-help">Unique email verified via HashSet.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="cust-phone">Phone Number</label>
+            <input type="text" id="cust-phone" placeholder="e.g. +1 (415) 555-0199" value="+1 (555) 321-7890">
+          </div>
+
+          <div class="form-group">
+            <label for="cust-license">Driver's License ID</label>
+            <input type="text" id="cust-license" placeholder="e.g. DL-CA772910" style="text-transform: uppercase;">
+          </div>
+
+          <div class="form-group">
+            <label for="cust-membership">Membership Tier</label>
+            <select id="cust-membership">
+              <option value="Standard">Standard Tier</option>
+              <option value="VIP Gold">VIP Gold</option>
+              <option value="Executive Platinum">Executive Platinum</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-customer-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-submit-new-customer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Register Customer</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Return Confirmation Modal -->
+  <div class="modal-backdrop" id="modal-return-vehicle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Process Vehicle Return</h3>
+          <p class="modal-subtitle">Conclude active rental agreement and update HashMap</p>
+        </div>
+        <button class="modal-close-btn" id="btn-close-return-modal">&times;</button>
+      </div>
+
+      <div class="return-details-body" id="return-details-body">
+        <!-- Injected by JS -->
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-return-modal">Cancel</button>
+        <button type="button" class="btn btn-emerald" id="btn-confirm-return">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Complete Return & Reset to Available</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
